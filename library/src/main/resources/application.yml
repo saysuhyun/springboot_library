@@ -1,7 +1,0 @@
-spring:
-  datasource:
-    ## java 데이터베이스 커넥터 jdbc  종류는 mysql  디비는 로컬 디비이름은 library
-    url: "jdbc:mysql://localhost/library"
-    username: "suhyun"
-    password: "database1234"
-    driver-class-name: com.mysql.cj.jdbc.Driver
