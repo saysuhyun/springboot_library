@@ -2,10 +2,19 @@ package com.group.libraryapp.domain.user;
 
 import lombok.Getter;
 
-@Getter
+import javax.persistence.*;
+
+@Entity // 객체와 테이블 매핑
 public class User {
 
+    @Id // 프라이머리 키 설정
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
+    private Long id = null; // bigint = long
+
+    @Column(nullable = false, length = 25 , name="name") // 널x, 길이제한, 매핑될 컬럼명 지정
     private String name;
+
+    // 그외 제약조건 없으면 @Column 생략가능
     private Integer age;
 
     public User(String name, Integer age) {
@@ -16,4 +25,22 @@ public class User {
         this.name = name;
         this.age = age;
     }
+
+    public String getName(){
+        return name;
+    }
+
+    public Integer getAge(){
+        return age;
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public void updateName(String name){
+        this.name = name;
+    }
+
+
 }
