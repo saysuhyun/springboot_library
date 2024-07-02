@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity // 객체와 테이블 매핑
 public class User {
 
-    @Id // 프라이머리 키 설정
+    @Id // 프라이머리 키 설정 test
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
     private Long id = null; // bigint = long
 
