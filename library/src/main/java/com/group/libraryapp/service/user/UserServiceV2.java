@@ -49,5 +49,14 @@ public class UserServiceV2 {
         userRepository.save(user);
     }
 
+    public void deleteUser(String name){
+
+        // findbyname이 jpa에서 기본으로 안 주어짐
+        // null이 나오면 예외던짐
+        User user = userRepository.findByName(name).orElseThrow(IllegalArgumentException::new);
+        // 삭제
+        userRepository.delete(user);
+    }
+
 }
 
