@@ -6,6 +6,7 @@ import com.group.libraryapp.dto.user.request.UserCreateRequest;
 import com.group.libraryapp.dto.user.request.UserUpdateRequest;
 import com.group.libraryapp.dto.user.response.UserResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,24 +20,31 @@ public class UserServiceV2 {
         this.userRepository = userRepository;
     }
 
-    public void saveUser(UserCreateRequest request){
+    // 아래 함수가 시작될때 start transaction;을 실행 트랜젝션 시작
+    // 함수가 예외 없이 잘 끝나면 commit
+    // 문제 생긴 경우 rollback
+    @Transactional
+    public void saveUser(UserCreateRequest request) {
+
         //JPA상속 받은 레포지토리가 있으니까 기본 제공 함수로 sql없이 가능
         // User 객체를 반환
-        User user= userRepository.save(new User(request.getName(),request.getAge()));
+        userRepository.save(new User(request.getName(), request.getAge()));
 
     }
 
-    public List<UserResponse> getUsers(){
+    // select 쿼리인 경우 readOnly를 붙여서 검색하는 쿼리만 동작시켜서 조금 더 빠
+    @Transactional(readOnly = true)
+    public List<UserResponse> getUsers() {
 
         // 모든 정보를 가지고 리스트로 반환하는 메서드
-        List<User> users = userRepository.findAll();
-
-        // 전체 User정보를 가지고 있다가 그걸 스트림으로 UserReponse객체에 넣어서 반환
-        return users.stream().map(UserResponse::new)
+        return userRepository.findAll().stream()
+                .map(UserResponse::new)
                 .collect(Collectors.toList());
+
     }
 
-    public void updateUser(UserUpdateRequest request){
+    @Transactional
+    public void updateUser(UserUpdateRequest request) {
 
         // id로 존재하는지 찾고 리턴으로 Optional<User>로 받는데 이 함수 중 없으면 에러 던지는 메서드를 사용해서 참거짓 파악
         User user = userRepository.findById(request.getId())
@@ -49,11 +57,14 @@ public class UserServiceV2 {
         userRepository.save(user);
     }
 
-    public void deleteUser(String name){
+    @Transactional
+    public void deleteUser(String name) {
+
 
         // findbyname이 jpa에서 기본으로 안 주어짐
         // null이 나오면 예외던짐
         User user = userRepository.findByName(name).orElseThrow(IllegalArgumentException::new);
+
         // 삭제
         userRepository.delete(user);
     }
