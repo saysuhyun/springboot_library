@@ -46,8 +46,11 @@ public class BookService {
         User user = userRepository.findByName(request.getUserName())
                 .orElseThrow(IllegalArgumentException::new);
 
+        // 유저가 직접 유저론히스토리를 사용해서 직접 처리
+        user.loanBook(book.getName());
+
         // 5. 유저 정보와 책 정보기반으로 UserLoanHistory에 저장
-        userLoanHistoryRepository.save(new UserLoanHistory(user.getId(), book.getName()));
+        //userLoanHistoryRepository.save(new UserLoanHistory(user, book.getName()));
 
     }
 
@@ -57,12 +60,15 @@ public class BookService {
         User user = userRepository.findByName(request.getUserName())
                 .orElseThrow(IllegalArgumentException::new);
 
-        UserLoanHistory history = userLoanHistoryRepository.findByUserIdAndBookName(user.getId(), request.getBookName()).orElseThrow(IllegalArgumentException::new);
-
-        // 책 반납 완
-        history.doReturn();
-
-        // 변경된 영속성 객체는 변경감지 해서 save없어도 오케
-        userLoanHistoryRepository.save(history);
+        // 간단하게 처리하게 됨 객체를 연결시켰으니까
+        user.returnBook(request.getBookName());
+//
+//        UserLoanHistory history = userLoanHistoryRepository.findByUserIdAndBookName(user.getId(), request.getBookName()).orElseThrow(IllegalArgumentException::new);
+//
+//        // 책 반납 완
+//        history.doReturn();
+//
+//        // 변경된 영속성 객체는 변경감지 해서 save없어도 오케
+//        userLoanHistoryRepository.save(history);
     }
 }
